@@ -118,8 +118,9 @@
                 <version>3.3.1</version>
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
-                    <!-- needed to include .gitignore -->
-                    <useDefaultExcludes>false</useDefaultExcludes>
+                    <!-- needed to include .gitignore and .gitkeep -->
+                    <addDefaultExcludes>false</addDefaultExcludes>
+                    <propertiesEncoding>${project.build.sourceEncoding}</propertiesEncoding>
                 </configuration>
             </plugin>
 
@@ -146,6 +147,9 @@
                         <configuration>
                             <name>year</name>
                             <pattern>yyyy</pattern>
+                            <!-- pinned to keep the build reproducible across machines -->
+                            <locale>en</locale>
+                            <timeZone>UTC</timeZone>
                         </configuration>
                     </execution>
                 </executions>
