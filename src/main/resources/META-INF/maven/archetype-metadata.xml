@@ -29,6 +29,10 @@
         <requiredProperty key="year">
             <defaultValue>${year}</defaultValue>
         </requiredProperty>
+        <!-- recorded in the generated root pom; already satisfied by -DarchetypeVersion -->
+        <requiredProperty key="archetypeVersion">
+            <defaultValue>${project.version}</defaultValue>
+        </requiredProperty>
     </requiredProperties>
 
     <fileSets>
