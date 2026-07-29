@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2025, 2026 Eurotech and/or its affiliates and others
+
+    This program and the accompanying materials are made
+    available under the terms of the Eclipse Public License 2.0
+    which is available at https://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+     Eurotech
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.eclipse.kura</groupId>
+    <artifactId>kura-addon-archetype</artifactId>
+    <version>6.0.0-SNAPSHOT</version>
+    <packaging>maven-archetype</packaging>
+
+    <name>Eclipse Kura Add-on Archetype</name>
+    <description>Maven archetype that bootstraps an Eclipse Kura add-on project: OSGi bundle
+        skeleton, bill of materials, unit and bnd OSGi integration tests and Debian
+        packaging. The archetype version matches the Eclipse Kura version it targets.</description>
+    <url>https://eclipse-kura.github.io/kura/docs-develop/java-application-development/kura-addon-archetype/</url>
+
+    <organization>
+        <name>Eclipse Kura</name>
+        <url>https://eclipse.dev/kura/</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License - v 2.0</name>
+            <url>https://www.eclipse.org/legal/epl-2.0/</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>kura-dev</id>
+            <name>Eclipse Kura Developers</name>
+            <email>kura-dev@eclipse.org</email>
+            <organization>Eclipse Foundation</organization>
+            <url>https://www.eclipse.org/</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/eclipse-kura/kura-archetype.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/eclipse-kura/kura-archetype.git</developerConnection>
+        <url>https://github.com/eclipse-kura/kura-archetype</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/eclipse-kura/kura/issues</url>
+    </issueManagement>
+
+    <properties>
+        <!-- required by the filtering of archetype-metadata.xml and test-env/kura.properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>repo.eclipse.org</id>
+            <name>Eclipse Kura Repository - Releases</name>
+            <url>https://repo.eclipse.org/content/repositories/kura-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>repo.eclipse.org</id>
+            <name>Eclipse Kura Repository - Snapshots</name>
+            <url>https://repo.eclipse.org/content/repositories/kura-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>archetype-resources/tests/test-env/framework/kura.properties</include>
+                    <include>META-INF/maven/archetype-metadata.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>archetype-resources/tests/test-env/framework/kura.properties</exclude>
+                    <exclude>META-INF/maven/archetype-metadata.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.archetype</groupId>
+                <artifactId>archetype-packaging</artifactId>
+                <version>3.3.1</version>
+            </extension>
+        </extensions>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <includeEmptyDirs>true</includeEmptyDirs>
+                    <!-- needed to include .gitignore -->
+                    <useDefaultExcludes>false</useDefaultExcludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-archetype-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <!-- needed to include .gitignore -->
+                    <useDefaultExcludes>false</useDefaultExcludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <name>year</name>
+                            <pattern>yyyy</pattern>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
