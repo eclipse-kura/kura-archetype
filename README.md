@@ -25,7 +25,7 @@ Full documentation, including IDE setup:
 |---|---|
 | **JDK 21** | Required. The generated project sets `maven.compiler.release=21`; older JDKs fail with `release version 21 not supported`. |
 | **Maven 3.9.x** | The version used by CI is 3.9.9. |
-| **git** | Required to *build* a generated project: `git-commit-id-maven-plugin` runs in the `initialize` phase to stamp the Debian package version. |
+| **git** | Optional. Inside a git repository the Debian package version is stamped with the short commit hash, otherwise with a plain timestamp. |
 
 ## Installing the archetype
 
@@ -140,14 +140,11 @@ aggregator and in `distrib`, and re-enabled in the bundle module.
 
 ```bash
 cd kura-myfeature
-git init && git add -A && git commit -m "initial commit"
 mvn clean install -Presolve-integration-tests
 ```
 
-Both extra steps are required on the **first** build:
+The extra profile is required on the **first** build:
 
-- `git init` — `git-commit-id-maven-plugin` needs a repository to read the commit hash that
-  goes into the snapshot Debian version;
 - `-Presolve-integration-tests` — the generated `integration-test.bndrun` ships
   `-runbundles: ${error;Integration test bundles must be resolved…}`. The profile moves the
   `bnd-resolver-maven-plugin:resolve` execution from phase `none` to `pre-integration-test`,
@@ -185,7 +182,15 @@ Two version schemes:
 | Build | Version | Command |
 |---|---|---|
 | development (default) | `1.0.0~git202607290932.c607da2-1` | `mvn clean install` |
+| development, no git repository | `1.0.0~local202607290932-1` | `mvn clean install` |
 | release | `1.0.0-1` | `mvn clean install -DreleaseBuild` |
+
+The development version is built from the build timestamp plus the short commit hash read
+by `git-commit-id-maven-plugin`. The plugin is not mandatory: outside a git repository it
+is skipped and `build-helper-maven-plugin` composes the `local<timestamp>` fallback, so the
+project builds without a `git init`. The one case that still fails is a repository with no
+commits yet, where the plugin cannot read `HEAD`: commit once, or pass
+`-Dmaven.gitcommitid.skip=true` to get the timestamp fallback.
 
 `-DreleaseBuild` also activates `maven-enforcer-plugin`'s `requireReleaseVersion`, which
 fails the build if the project version is still a `-SNAPSHOT`.

@@ -48,6 +48,8 @@
         <deb.maintainer>${project.organization.name} &lt;${project.developers[0].email}&gt;</deb.maintainer>
         <deb.docs>${project.url}</deb.docs>
 
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+
         <!-- final name of the generated debian package -->
         <package.name>${artifactId}</package.name>
         <package.revision>1</package.revision>
@@ -71,9 +73,7 @@
                 </property>
             </activation>
             <properties>
-                <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-                <package.snapshot>git${maven.build.timestamp}.${git.commit.id.abbrev}</package.snapshot>
-
+                <!-- package.snapshot is composed at build time, see build-helper-maven-plugin -->
                 <package.version>${release.version}~${package.snapshot}</package.version>
             </properties>
         </profile>
@@ -136,10 +136,42 @@
                             <failIfNoMatch>false</failIfNoMatch>
                         </configuration>
                     </execution>
+
+                    <!--
+                        Composes package.snapshot, used by the development version only.
+
+                        When the project is not inside a git repository the git plugin below is
+                        skipped, ${git.commit.id.abbrev} is left unresolved and the regex swaps the
+                        git block for a timestamp-only fallback: git<ts>.<commit> becomes local<ts>
+
+                        Two details that must not be "simplified": <value> has to stay a composite
+                        string, because a bare ${git.commit.id.abbrev} would resolve to null and
+                        make the goal fail with "value required"; the regex has to keep a backslash
+                        between $ and { so that Maven does not interpolate the placeholder away.
+                    -->
+                    <execution>
+                        <id>regex-property-package-snapshot</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <name>package.snapshot</name>
+                            <value>git${maven.build.timestamp}.${git.commit.id.abbrev}</value>
+                            <regex>^git(.*)\.\$\{git\.commit\.id\.abbrev\}$</regex>
+                            <replacement>local$1</replacement>
+                            <failIfNoMatch>false</failIfNoMatch>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
-            <!-- Responsible for retrieving the short git commit (defaults to length 7) -->
+            <!--
+                Responsible for retrieving the short git commit (defaults to length 7).
+
+                Not mandatory: outside a git repository the execution is skipped and the
+                package version falls back to a plain timestamp.
+            -->
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
@@ -157,6 +189,7 @@
                     <injectAllReactorProjects>true</injectAllReactorProjects>
                     <generateGitPropertiesFile>false</generateGitPropertiesFile>
                     <skipPoms>false</skipPoms>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
                     <includeOnlyProperties>
                         <includeOnlyProperty>^git.commit.id.abbrev$</includeOnlyProperty>
                     </includeOnlyProperties>
