@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 @Component(immediate = true)
 public class ExampleComponentItTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExampleComponentItTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExampleComponentItTest.class);
 
-    private static final CountDownLatch dependencies = new CountDownLatch(1);
+    private static final CountDownLatch DEPENDENCIES = new CountDownLatch(1);
 
     // needs to be static for being available to JUnit Runner
     private static ConfigurableComponent exampleComponent;
@@ -54,13 +54,13 @@ public class ExampleComponentItTest {
     )
     public void setExampleComponent(final ConfigurableComponent componentUnderTest) {
         exampleComponent = componentUnderTest;
-        dependencies.countDown();
+        DEPENDENCIES.countDown();
         logger.info("Got service reference {}", exampleComponent.getClass().getSimpleName());
     }
 
     @BeforeClass
     public static void awaitDependencies() throws InterruptedException {
-        if (!dependencies.await(30, TimeUnit.SECONDS)) {
+        if (!DEPENDENCIES.await(30, TimeUnit.SECONDS)) {
             throw new IllegalStateException("dependencies not resolved in 30 seconds");
         }
     }
@@ -80,7 +80,7 @@ public class ExampleComponentItTest {
 
     @Test
     public void shouldHaveTrackedExampleComponent() {
-    	assertNotNull(exampleComponent);
+        assertNotNull(exampleComponent);
     }
 
 }
