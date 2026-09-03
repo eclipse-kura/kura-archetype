@@ -79,7 +79,7 @@ mvn -B archetype:generate \
 | `package` | Base Java package **and** the main bundle's `artifactId` / OSGi symbolic name | *prompted* |
 | `version` | Version of the generated project | `1.0.0-SNAPSHOT` |
 | `mainBundleVendor` | Vendor name for the add-on <sup>1</sup> | `Eclipse Kura` |
-| `kuraVersion` | Kura version whose BOMs resolve the dependencies | the archetype's own version |
+| `kuraVersion` | Kura version whose bill of materials (`org.eclipse.kura:kura-bom`) resolves the dependencies | the archetype's own version |
 | `year` | Copyright year written into the generated file headers | the year the archetype was built <sup>2</sup> |
 
 <sup>1</sup> Declared by the archetype but not referenced by any template file at the
@@ -108,8 +108,8 @@ With the values used above:
 
 ```
 kura-myfeature
-├── pom.xml                             aggregator: bnd 7.2.2, Java 21, imports the
-│                                       org.eclipse.kura:kura and :target-platform BOMs
+├── pom.xml                             aggregator: bnd 7.3.0, Java 21, imports the
+│                                       org.eclipse.kura:kura-bom bill of materials
 ├── bom/pom.xml                         kura-myfeature-bom — the bundles you release
 ├── com.example.myfeature/              the OSGi bundle
 │   ├── pom.xml                         built by bnd-maven-plugin
@@ -124,9 +124,11 @@ kura-myfeature
 │   ├── pom.xml                         jdeb, bound to the package phase
 │   └── deb/control/control             package metadata and kura-core dependency
 └── tests/                              kura-myfeature-tests
-    ├── pom.xml                         JUnit, Mockito, Moquette, Kura PDE deps
+    ├── pom.xml                         JUnit, Mockito and the Kura runtime bundles
+    │                                   indexed for the OSGi integration tests
     ├── test-env/                       Kura framework used by the integration tests
-    │   ├── framework/kura.properties, log4j/log4j.xml, user/snapshots/snapshot_0.xml
+    │   ├── framework/kura.properties, log4j/log4j.xml, log4j/jul-logging.properties,
+    │   │   user/snapshots/snapshot_0.xml
     └── com.example.myfeature.test/
         ├── integration-test.bndrun     OSGi runtime for the integration tests
         └── src/main/java/.../ExampleComponentItTest.java   (OSGi integration test)
@@ -169,7 +171,7 @@ Both test kinds run as part of `mvn verify` / `mvn install`:
   the run.
 
 Reports land in `tests/<package>.test/target/surefire-reports/` (unit) and
-`.../surefire-reports/integration-test/` (OSGi). JaCoCo writes an aggregate report to
+`tests/<package>.test/target/test-reports/integration-test/` (OSGi). JaCoCo writes an aggregate report to
 `tests/<package>.test/target/site/jacoco-aggregate/`.
 
 ## Building the Debian package
@@ -204,6 +206,11 @@ Install it on a device with `apt install ./<file>.deb`, then restart Kura.
 - **`bom/pom.xml`** — list every bundle you want to release.
 - **`tests/<package>.test/integration-test.bndrun`** — `-runrequires` for the bundles your
   integration tests need.
+- **`tests/pom.xml`** — the dependencies of this module are the bundles indexed for the
+  bnd resolver. They mirror the Kura runtime (the same list as `test/pom.xml` in the Kura
+  repository); add here any extra bundle your `.bndrun` requires. Versions of Kura bundles
+  and of their third-party dependencies are managed by `kura-bom`, so declare a version only
+  for artifacts that are not part of the Kura runtime.
 
 ## Working on the archetype itself
 
