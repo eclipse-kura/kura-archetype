@@ -2,7 +2,7 @@ index: target/index.xml
 
 -standalone: ${index}
 
--resolve.effective: active
+-resolve.effective: resolve
 
 -runfw: org.eclipse.osgi
 
@@ -11,9 +11,12 @@ index: target/index.xml
 # Run all integration tests which are named xyzTest
 Test-Cases: ${classes;CONCRETE;PUBLIC;NAMED;*Test}
 
+# ds.delayed.keepInstances=true keeps DS delayed component instances (e.g. the Kura db and
+# keystore services) alive after their use count drops to zero, as in a running Kura framework.
 -runproperties: \
     osgi.console=5002,\
     osgi.signedcontent.support=all,\
+    ds.delayed.keepInstances=true,\
     org.eclipse.kura.mode=emulator,\
     org.osgi.framework.trust.repositories=${kura.workdir}/user/security/.certificates.ks,\
     kura.configuration=file:${kura.workdir}/framework/kura.properties,\
@@ -23,12 +26,15 @@ Test-Cases: ${classes;CONCRETE;PUBLIC;NAMED;*Test}
     log4j.configurationFile=file:${kura.workdir}/log4j/log4j.xml,\
     org.osgi.framework.bootdelegation='org.mockito.internal.creation.bytebuddy.inject'
 
-# Inject JaCoCo agent args produced by maven (prepare-agent)
+# Inject JaCoCo agent args produced by maven (prepare-agent), and point
+# java.util.logging at the test config that silences the noisy Jersey JAX-RS
+# whiteboard provider-constraint WARNINGs (see log4j/jul-logging.properties).
 -runvm: \
-	${argLine}
+    ${argLine}, \
+    -Djava.util.logging.config.file=${kura.workdir}/log4j/jul-logging.properties
 
 # Used by Objenesis/Mockito and not actually optional
--runsystempackages: sun.reflect
+-runsystempackages: sun.reflect, sun.security.pkcs11, sun.misc
 
 # Require Kura Emulator
 -runrequires.emulator: \
@@ -69,8 +75,11 @@ Test-Cases: ${classes;CONCRETE;PUBLIC;NAMED;*Test}
 	osgi.identity;filter:='(osgi.identity=org.eclipse.kura.cloudconnection.kapua.mqtt.provider)',\
 	osgi.identity;filter:='(osgi.identity=org.eclipse.kura.db.h2db.provider)',\
 
-# Require testing bundle
+# Require the bundle under test (see the bundle.under.test property in pom.xml) and
+# the test bundle itself. Bundles are only included in -runbundles when required here
+# or by another required bundle: add any other bundle your tests need.
 -runrequires: \
+    osgi.identity;filter:='(osgi.identity=${bundle.under.test})',\
     osgi.identity;filter:='(osgi.identity=${project.artifactId})',\
 
 #

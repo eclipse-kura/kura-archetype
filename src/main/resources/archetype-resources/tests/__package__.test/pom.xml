@@ -28,6 +28,11 @@
     <artifactId>${package}.test</artifactId>
     <description>Tests of ${package}</description>
 
+    <properties>
+        <!-- symbolic name of the bundle under test, required by integration-test.bndrun -->
+        <bundle.under.test>${package}</bundle.under.test>
+    </properties>
+
     <!-- Insert your bundles as dependencies -->
     <dependencies>
         <dependency>
