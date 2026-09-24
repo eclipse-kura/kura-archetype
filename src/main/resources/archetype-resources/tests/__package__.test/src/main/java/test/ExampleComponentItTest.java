@@ -10,13 +10,12 @@
  * Contributors:
  *  Eurotech
  *******************************************************************************/
-package ${package}.test;
+package tmp.test;
 
 import static org.junit.Assert.assertNotNull;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.eclipse.kura.configuration.ConfigurableComponent;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -48,10 +47,11 @@ public class ExampleComponentItTest {
         bundleContext = context;
     }
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY, //
-        policy = ReferencePolicy.STATIC, //
-        target = "(kura.service.pid=${package}.ExampleComponent)" //
-    )
+    @Reference(
+            cardinality = ReferenceCardinality.MANDATORY, //
+            policy = ReferencePolicy.STATIC, //
+            target = "(kura.service.pid=${package}.ExampleComponent)" //
+            )
     public void setExampleComponent(final ConfigurableComponent componentUnderTest) {
         exampleComponent = componentUnderTest;
         DEPENDENCIES.countDown();
@@ -82,5 +82,4 @@ public class ExampleComponentItTest {
     public void shouldHaveTrackedExampleComponent() {
         assertNotNull(exampleComponent);
     }
-
 }
