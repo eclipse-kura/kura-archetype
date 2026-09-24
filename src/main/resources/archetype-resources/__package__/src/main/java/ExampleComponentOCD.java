@@ -16,7 +16,6 @@ import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 // allow using _ in method names, it is needed for having ids containing '.'
-@SuppressWarnings("checkstyle:MethodName")
 @ObjectClassDefinition(id = "${package}.ExampleComponent", //
     name = "ExampleComponent", //
     description = "An example configurable component implementation." //
