@@ -10,7 +10,7 @@
  * Contributors:
  *  Eurotech
  *******************************************************************************/
-package tmp.test;
+package ${package}.test;
 
 import static org.junit.Assert.assertNotNull;
 
