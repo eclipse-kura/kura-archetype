@@ -13,9 +13,7 @@
      Eurotech
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.eclipse.kura</groupId>
@@ -47,28 +45,22 @@
             <id>kura-dev</id>
             <name>Eclipse Kura Developers</name>
             <email>kura-dev@eclipse.org</email>
-            <organization>Eclipse Foundation</organization>
             <url>https://www.eclipse.org/</url>
+            <organization>Eclipse Foundation</organization>
         </developer>
     </developers>
 
     <scm>
         <connection>scm:git:https://github.com/eclipse-kura/kura-archetype.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/eclipse-kura/kura-archetype.git</developerConnection>
-        <url>https://github.com/eclipse-kura/kura-archetype</url>
         <tag>HEAD</tag>
+        <url>https://github.com/eclipse-kura/kura-archetype</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/eclipse-kura/kura/issues</url>
     </issueManagement>
-
-    <properties>
-        <!-- required by the filtering of archetype-metadata.xml and test-env/kura.properties -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
 
     <distributionManagement>
         <repository>
@@ -83,33 +75,31 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <properties>
+        <!-- required by the filtering of archetype-metadata.xml and test-env/kura.properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
     <build>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <directory>src/main/resources</directory>
                 <includes>
                     <include>archetype-resources/tests/test-env/framework/kura.properties</include>
                     <include>META-INF/maven/archetype-metadata.xml</include>
                 </includes>
             </resource>
             <resource>
-                <directory>src/main/resources</directory>
                 <filtering>false</filtering>
+                <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>archetype-resources/tests/test-env/framework/kura.properties</exclude>
                     <exclude>META-INF/maven/archetype-metadata.xml</exclude>
                 </excludes>
             </resource>
         </resources>
-
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.archetype</groupId>
-                <artifactId>archetype-packaging</artifactId>
-                <version>3.3.1</version>
-            </extension>
-        </extensions>
 
         <plugins>
             <plugin>
@@ -154,7 +144,42 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>3.10.2</version>
+                <configuration>
+                    <pom>
+                        <includes>
+                            <include>src/main/resources/**/pom.xml</include>
+                        </includes>
+                        <sortPom>
+                            <expandEmptyElements>false</expandEmptyElements>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                            <spaceBeforeCloseEmptyElement>true</spaceBeforeCloseEmptyElement>
+                            <quiet>true</quiet>
+                        </sortPom>
+                    </pom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.archetype</groupId>
+                <artifactId>archetype-packaging</artifactId>
+                <version>3.3.1</version>
+            </extension>
+        </extensions>
     </build>
 
 </project>

@@ -18,11 +18,9 @@ import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import ${package}.ExampleComponent;
 import ${package}.ExampleDependencyService;
 
@@ -48,9 +46,11 @@ public class ExampleComponentTest {
     private void givenDependencyService() {
         this.dependencyService = mock(ExampleDependencyService.class);
         doAnswer(answer -> {
-            logger.info("I'm in a mock ExampleDependencyService");
-            return null;
-        }).when(this.dependencyService).run();
+                    logger.info("I'm in a mock ExampleDependencyService");
+                    return null;
+                })
+                .when(this.dependencyService)
+                .run();
     }
 
     private void givenExampleComponent() {
@@ -69,5 +69,4 @@ public class ExampleComponentTest {
     private void thenExampleOptionIs(String examplePropertyValue) {
         assertEquals(examplePropertyValue, this.exampleComponent.getOptions().getExampleProperty());
     }
-
 }
