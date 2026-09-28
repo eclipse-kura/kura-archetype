@@ -151,14 +151,30 @@
                 <version>3.10.2</version>
                 <configuration>
                     <java>
+                        <includes>
+                            <include>src/main/resources/archetype-resources/**/*.java</include>
+                        </includes>
+                        <!-- The templates contain ${package}, which is not valid Java. Mask it
+                            with a same-length valid identifier before formatting and restore it
+                            afterwards, so that palantir sees the same line lengths. -->
+                        <replaceRegex>
+                            <name>Mask archetype package variable</name>
+                            <searchRegex>\$\{package\}</searchRegex>
+                            <replacement>\$_package_</replacement>
+                        </replaceRegex>
                         <!-- The order of the formatters matters: palantirJavaFormat also
-                            rewrites the import order, so it has to come first. Kura keeps
-                        the import order palantir produces, hence no importOrder step. -->
+                            rewrites the import order, so it has to come before the import steps.
+                        Kura keeps the import order palantir produces, hence no importOrder step. -->
                         <palantirJavaFormat>
                             <version>2.98.0</version>
                         </palantirJavaFormat>
                         <removeUnusedImports />
                         <forbidWildcardImports />
+                        <replaceRegex>
+                            <name>Restore archetype package variable</name>
+                            <searchRegex>\$_package_</searchRegex>
+                            <replacement>\$\{package\}</replacement>
+                        </replaceRegex>
                         <excludes>
                             <exclude>**/generated-sources/**/*.java</exclude>
                         </excludes>
