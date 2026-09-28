@@ -10,7 +10,7 @@
  * Contributors:
  *  Eurotech
  *******************************************************************************/
-package ${package}.test;
+package ${package};
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doAnswer;
@@ -21,8 +21,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ${package}.ExampleComponent;
-import ${package}.ExampleDependencyService;
 
 public class ExampleComponentTest {
 

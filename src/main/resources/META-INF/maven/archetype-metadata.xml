@@ -68,7 +68,6 @@
                 <exclude>**/*.bndrun</exclude>
                 <exclude>**/*.java</exclude>
                 <exclude>**/src/main/java/test</exclude>
-                <exclude>**/src/test/java/test</exclude>
             </excludes>
         </fileSet>
 
