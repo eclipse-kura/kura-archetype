@@ -82,10 +82,10 @@
             <directory>__package__/src/main/java</directory>
         </fileSet>
         <fileSet filtered="true" packaged="true">
-            <directory>tests/__package__.test/src/main/java</directory>
+            <directory>__package__/src/test/java</directory>
         </fileSet>
         <fileSet filtered="true" packaged="true">
-            <directory>tests/__package__.test/src/test/java</directory>
+            <directory>tests/__package__.test/src/main/java</directory>
         </fileSet>
         <fileSet encoding="UTF-8">
             <directory></directory>
