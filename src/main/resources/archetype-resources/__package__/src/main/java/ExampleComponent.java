@@ -13,7 +13,6 @@
 package ${package};
 
 import java.util.Map;
-
 import org.eclipse.kura.configuration.ConfigurableComponent;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -25,10 +24,11 @@ import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(immediate = true, //
+@Component(
+        immediate = true, //
         configurationPolicy = ConfigurationPolicy.REQUIRE, //
-        property = { "kura.service.pid=${package}.ExampleComponent" } //
-)
+        property = {"kura.service.pid=${package}.ExampleComponent"} //
+        )
 @Designate(ocd = ExampleComponentOCD.class, factory = false)
 public class ExampleComponent implements ConfigurableComponent {
 
@@ -49,9 +49,9 @@ public class ExampleComponent implements ConfigurableComponent {
      * the ComponentContext and the ExampleComponentOCD as parameters.
      * All parameters in activate, modified, deactivate are optional and can be
      * removed if not needed
-     * 
+     *
      * Examples:
-     * 
+     *
      * public void activate()
      * public void activate(ExampleComponentOCD configuration)
      * public void activate(ComponentContext componentContext, final Map<String, Object> properties, final
@@ -87,5 +87,4 @@ public class ExampleComponent implements ConfigurableComponent {
     public ExampleComponentOptions getOptions() {
         return this.options;
     }
-
 }

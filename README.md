@@ -114,12 +114,14 @@ kura-myfeature
 ├── com.example.myfeature/              the OSGi bundle
 │   ├── pom.xml                         built by bnd-maven-plugin
 │   ├── about.html, about_files/        licence files shipped inside the bundle
-│   └── src/main/java/com/example/myfeature/
-│       ├── ExampleComponent.java       @Component with lifecycle and config update
-│       ├── ExampleComponentOCD.java    @ObjectClassDefinition (metatype)
-│       ├── ExampleComponentOptions.java
-│       ├── ExampleDependencyService.java, ExampleDependencyServiceComponent.java
-│       └── Property.java
+│   ├── src/main/java/com/example/myfeature/
+│   │   ├── ExampleComponent.java       @Component with lifecycle and config update
+│   │   ├── ExampleComponentOCD.java    @ObjectClassDefinition (metatype)
+│   │   ├── ExampleComponentOptions.java
+│   │   ├── ExampleDependencyService.java, ExampleDependencyServiceComponent.java
+│   │   └── Property.java
+│   └── src/test/java/com/example/myfeature/
+│       └── ExampleComponentTest.java   unit test, same package as the code under test
 ├── distrib/                            kura-myfeature-distrib — Debian packaging
 │   ├── pom.xml                         jdeb, bound to the package phase
 │   └── deb/control/control             package metadata and kura-core dependency
@@ -132,7 +134,6 @@ kura-myfeature
     └── com.example.myfeature.test/
         ├── integration-test.bndrun     OSGi runtime for the integration tests
         └── src/main/java/.../ExampleComponentItTest.java   (OSGi integration test)
-            src/test/java/.../ExampleComponentTest.java     (unit test)
 ```
 
 Only the BOM and the bundle are deployed: `maven-deploy-plugin` is skipped in the
@@ -162,17 +163,19 @@ Afterwards a plain `mvn clean install` is enough.
 
 Both test kinds run as part of `mvn verify` / `mvn install`:
 
-- **Unit tests** — `maven-surefire-plugin`, from `src/test/java` in
-  `tests/<package>.test`.
+- **Unit tests** — `maven-surefire-plugin`, from `src/test/java` of the bundle
+  (`<package>/src/test/java`). They live in the same package as the classes under test,
+  so they can reach package-private members, following the convention of the Kura bundles
+  (e.g. `org.eclipse.kura.linux.clock`).
 - **OSGi integration tests** — `bnd-testing-maven-plugin` in the `integration-test` phase.
   Test classes live in `src/main/java` (they are part of the test bundle) and are selected
   by `Test-Cases: ${classes;CONCRETE;PUBLIC;NAMED;*Test}` in the `.bndrun`. The framework
   is assembled from `tests/test-env/` into `tests/<package>.test/target/test-env` before
   the run.
 
-Reports land in `tests/<package>.test/target/surefire-reports/` (unit) and
-`tests/<package>.test/target/test-reports/integration-test/` (OSGi). JaCoCo writes an aggregate report to
-`tests/<package>.test/target/site/jacoco-aggregate/`.
+Reports land in `<package>/target/surefire-reports/` (unit) and
+`tests/<package>.test/target/test-reports/integration-test/` (OSGi). JaCoCo writes an aggregate report,
+including the unit tests coverage of the bundle, to `tests/<package>.test/target/site/jacoco-aggregate/`.
 
 ## Building the Debian package
 
